@@ -29,6 +29,7 @@
     <script src="util.js" type="text/javascript"></script>
     <script src="color_utils.js" type="text/javascript"></script>
     <script src="Stats.js" type="text/javascript"></script>
+    <script src="touch_control.js" type="text/javascript"></script>
     <script type="text/javascript">
       CSS = {
         mat4ToCSSMatrix : function(mat, dst) {
@@ -261,40 +262,57 @@
         }
         var currentRoomNumber = 0;        
         var zoomIn = true;
-        window.addEventListener('keydown', function(ev) {
-          if (Key.match(ev, Key.DOWN)) {
+        var handleInput = function(action){
+          if (action == 'down') {
             if (Math.floor(currentRoomNumber / 10) == 9) {
               currentRoomNumber -= 90;
             } else {
               currentRoomNumber += 10;
             }
-          } else if (Key.match(ev, Key.UP)) {
+          } else if (action == 'up') {
             if (Math.floor(currentRoomNumber / 10) == 0) {
               currentRoomNumber += 90;
             } else {
               currentRoomNumber -= 10;
             }
-          } else if (Key.match(ev, Key.LEFT)) {
+          } else if (action == 'left') {
             if (currentRoomNumber % 10 == 0) {
               currentRoomNumber += 9;
             } else {
               currentRoomNumber --;
             }
-          } else if (Key.match(ev, Key.RIGHT)) {
+          } else if (action == 'right') {
             if (currentRoomNumber % 10 == 9) {
               currentRoomNumber -= 9;
             } else {
               currentRoomNumber ++;
             }
-          } else if (Key.match(ev, Key.SPACE)) {
+          } else if (action == 'click') {
             rooms[currentRoomNumber].roomObject.toggleOpen();
-          } else if (Key.match(ev, 'z')) {
+          } else if (action == 'zoom') {
             zoomIn = !zoomIn;
           }
           
           currentRoomNumber = currentRoomNumber % rooms.length;
           if (currentRoomNumber < 0) 
-            currentRoomNumber += rooms.length;
+            currentRoomNumber += rooms.length;          
+        }
+        touchControl(handleInput);
+
+        window.addEventListener('keydown', function(ev) {
+          if (Key.match(ev, Key.DOWN)) {
+            handleInput('down');
+          } else if (Key.match(ev, Key.UP)) {
+            handleInput('up');
+          } else if (Key.match(ev, Key.LEFT)) {
+            handleInput('left');
+          } else if (Key.match(ev, Key.RIGHT)) {
+            handleInput('right');
+          } else if (Key.match(ev, Key.SPACE)) {
+            handleInput('click');
+          } else if (Key.match(ev, 'z')) {
+            handleInput('zoom');
+          }
         }, false);
         
         var stats = new Stats();
